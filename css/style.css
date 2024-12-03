@@ -102,3 +102,45 @@ main{
     transform: scale(1.03);
     background-color: #c2c2c2;
 }
+
+.pesquisa{
+    display: flex;
+    flex-direction: column;
+}
+
+.pesquisa input{
+    padding: 15px;
+    border:none;
+    background-color: #e7e7e7;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.pesquisa input:focus{
+    background-color: #c4c4c4;
+}
+
+.pesquisa label{
+    color: #464646;
+}
+
+.alterar{
+    display: flex;
+    flex-direction: column;
+}
+
+.alterar input{
+    padding: 15px;
+    border:none;
+    background-color: #e7e7e7;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.alterar input:focus{
+    background-color: #c4c4c4;
+}
+
+.alterar label{
+    color: #464646;
+}
