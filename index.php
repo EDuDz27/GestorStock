@@ -5,14 +5,12 @@ require_once 'models/Movimentacao.php';
 require_once 'models/Categoria.php';
 require_once 'models/Fornecedor.php';
 require_once 'models/Ordem.php';
-require_once 'models/Cliente.php';
 
 use models\Produto;
 use models\Movimentacao;
 use models\Categoria;
 use models\Fornecedor;
 use models\Ordem;
-use models\Cliente;
 
 $method = $_SERVER['REQUEST_METHOD'];
 $headers = getallheaders();
@@ -22,38 +20,38 @@ $ordem = new Ordem();
 
 // Método POST - (Registrar movimentação - Entrada/Saida)
 if ($method == 'POST') {
-    // Se o conteúdo for JSON continua
-    if (isset($headers['Content-Type']) && strpos($headers['Content-Type'], 'application/json') !== false) {
-        // Receber dados via JSON
-        $data = json_decode(file_get_contents('php://input'), true);
-        $nome = $data['nome'] ?? null;
-        $descricao = $data['descricao'] ?? null; // Descrição é opcional
-        $preco = $data['preco'] ?? null;
-        $quantidade = $data['quantidade'] ?? null;
-        $tipo = isset($data['tipo']) ? (int)$data['tipo'] : null; // Convertendo para inteiro
-        $id_categoria = $data['categoria'] ?? null;
-        $id_fornecedor = $data['fornecedor'] ?? null;
-        $id_cliente = $data['cliente'] ?? null;
+    // Verificar se os dados foram enviados via formulário
+    if ($_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded') {
+        // Receber os dados do formulário via POST
+        $nome = $_POST['nome'] ?? null;
+        $descricao = $_POST['descricao'] ?? null; // Descrição é opcional
+        $preco = $_POST['preco'] ?? null;
+        $quantidade = $_POST['quantidade'] ?? null;
+        $tipo = $_POST['tipo'] ?? null; // "0 - Entrada" ou "1 - Saída"
+        $id_categoria = $_POST['categoria'] ?? null;
+        $id_fornecedor = $_POST['fornecedor'] ?? null;
 
         // Verificações de campos obrigatórios
-        if (!$nome || !$preco || !$quantidade || !isset($tipo) || !$id_categoria) {
+        if (!$nome || !$preco || !$quantidade || !$tipo || !$id_categoria) {
             header("Content-Type: application/json; charset=UTF-8");
             echo json_encode(['error' => 'Campos obrigatórios estão faltando.']);
             exit();
         }
 
-        $data_ordem = date('Y-m-d');
-
-        // Validações
-        if ($tipo === 0 && !$id_fornecedor) {
+        // Validação do tipo
+        if ($tipo !== '0 - Entrada' && $tipo !== '1 - Saída') {
             header("Content-Type: application/json; charset=UTF-8");
-            echo json_encode(['error' => 'Fornecedor é obrigatório para entrada.']);
+            echo json_encode(['error' => 'Tipo inválido. O tipo deve ser "0 - Entrada" ou "1 - Saída".']);
             exit();
         }
 
-        if ($tipo === 1 && !$id_cliente) {
+        // A data da ordem será a data atual
+        $data_ordem = date('Y-m-d');
+
+        // Validação de fornecedor para tipo "0 - Entrada"
+        if ($tipo === '0 - Entrada' && !$id_fornecedor) {
             header("Content-Type: application/json; charset=UTF-8");
-            echo json_encode(['error' => 'Cliente é obrigatório para saída.']);
+            echo json_encode(['error' => 'Fornecedor é obrigatório para entrada.']);
             exit();
         }
 
@@ -65,9 +63,9 @@ if ($method == 'POST') {
             $id_produto = $produto_existente['id'];
             $quantidade_estoque = $produto_existente['quantidade_estoque'];
 
-            if ($tipo === 0) { // Entrada
+            if ($tipo === '0 - Entrada') { // Entrada
                 $novo_estoque = $quantidade_estoque + $quantidade;
-            } elseif ($tipo === 1) { // Saída
+            } elseif ($tipo === '1 - Saída') { // Saída
                 if ($quantidade_estoque >= $quantidade) {
                     $novo_estoque = $quantidade_estoque - $quantidade;
                 } else {
@@ -82,7 +80,7 @@ if ($method == 'POST') {
         } else {
             // Produto não existe, inserir novo produto
             $id_produto = $produto->inserir($nome, $descricao, $preco, $quantidade, $id_categoria, $id_fornecedor);
-            $tipo = 0;
+            $tipo = '0 - Entrada';  // Considera a entrada como padrão, mas pode ser ajustado
             $novo_estoque = $quantidade; // A quantidade inicial será a inserida
         }
 
@@ -90,7 +88,7 @@ if ($method == 'POST') {
         $valor = $preco * $quantidade;
 
         // Inserir a ordem
-        $id_ordem = $ordem->inserir($tipo, $data_ordem, $id_fornecedor, $id_cliente, $valor);
+        $id_ordem = $ordem->inserir($tipo, $data_ordem, $id_fornecedor, null, $valor);
 
         // Registrar a movimentação
         $movimentacao = new Movimentacao();
@@ -101,7 +99,7 @@ if ($method == 'POST') {
         echo json_encode(['message' => 'Movimentação registrada com sucesso!', 'estoque_atual' => $novo_estoque]);
         exit();
     } else {
-        // Retornar erro se não for um JSON
+        // Retornar erro se o tipo de conteúdo não for x-www-form-urlencoded
         header("Content-Type: application/json; charset=UTF-8");
         echo json_encode(['error' => 'Formato de conteúdo não suportado.']);
         exit();
@@ -134,16 +132,13 @@ if ($method == 'GET') {
 
 // Método PUT - Atualizar (Modificar um produto)
 if ($method == 'PUT') {
-    // Se o conteúdo for JSON continua
-    if (isset($headers['Content-Type']) && strpos($headers['Content-Type'], 'application/json') !== false) {
-        // Receber dados via JSON
-        $data = json_decode(file_get_contents('php://input'), true);
-        $id = $data['id'] ?? null;
-        $nome = $data['nome'] ?? null;
-        $descricao = $data['descricao'] ?? null; // Descrição é opcional
-        $preco = $data['preco'] ?? null;
-        $quantidade = $data['quantidade'] ?? null;
-        $id_categoria = $data['categoria'] ?? null;
+    if ($_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded') {
+        $id = $_POST['id'] ?? null;
+        $nome = $_POST['nome'] ?? null;
+        $descricao = $_POST['descricao'] ?? null; 
+        $preco = $_POST['preco'] ?? null;
+        $quantidade = $_POST['quantidade'] ?? null;
+        $id_categoria = $_POST['categoria'] ?? null;
 
         if (!$id || !$nome || !$preco || !$quantidade || !$id_categoria) {
             header("Content-Type: application/json; charset=UTF-8");
@@ -162,7 +157,6 @@ if ($method == 'PUT') {
         }
         exit();
     } else {
-        // Retornar erro se não for um JSON
         header("Content-Type: application/json; charset=UTF-8");
         echo json_encode(['error' => 'Formato de conteúdo não suportado.']);
         exit();
@@ -171,11 +165,8 @@ if ($method == 'PUT') {
 
 // Método DELETE - Deletar (Remover um produto)
 if ($method == 'DELETE') {
-    // Se o conteúdo for JSON continua
-    if (isset($headers['Content-Type']) && strpos($headers['Content-Type'], 'application/json') !== false) {
-        // Receber dados via JSON
-        $data = json_decode(file_get_contents('php://input'), true);
-        $id = $data['id'] ?? null;
+    if ($_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded') {
+        $id = $_POST['id'] ?? null;
 
         if (!$id) {
             header("Content-Type: application/json; charset=UTF-8");
@@ -194,7 +185,6 @@ if ($method == 'DELETE') {
         }
         exit();
     } else {
-        // Retornar erro se não for um JSON
         header("Content-Type: application/json; charset=UTF-8");
         echo json_encode(['error' => 'Formato de conteúdo não suportado.']);
         exit();
