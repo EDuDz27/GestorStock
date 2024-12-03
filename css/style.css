@@ -5,6 +5,7 @@ body{
     justify-content: center;
     align-items: center;
     margin: 0;
+    padding: 0;
     height: 100vh;
     background-color: #cfcfcf;
 }
@@ -12,25 +13,33 @@ body{
 nav{
     display: flex;
     justify-content: space-between;
-    padding: 20px 100px;
+    padding: 10px 100px;
     border-bottom: solid 1px black;
 }
 
 nav a{
     color: black;
     text-decoration: none;
-    background-color: #d3d3d3;
+    background-color: #e9e9e9;
     border-radius: 10px;
     width: 120px;
     height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: 0.2s;
+}
+
+nav a:hover{
+    background-color: #c2c2c2;
+    transform: scale(1.05);
 }
 
 main{
     background-color: white;
     border-radius: 10px;
+    max-width: 900px;
+    padding: 30px
 }
 
 .container{
@@ -43,7 +52,7 @@ main{
 }
 
 .container form{
-    padding: 20px 0;
+    padding: 30px 0 0 0;
     width: 800px;
     display: flex;
     flex-direction: column;
@@ -65,9 +74,13 @@ main{
 .entrada input{
     padding: 15px;
     border:none;
-    background-color: #cfcfcf;
+    background-color: #e7e7e7;
     border-radius: 5px;
     font-size: 16px;
+}
+
+.entrada input:focus{
+    background-color: #c4c4c4;
 }
 
 .entrada label{
@@ -75,16 +88,17 @@ main{
 }
 
 .submit{
-    margin: 50px 0 0;
+    margin: 30px 0 0;
     font-size: 20px;
     width: 30%;
     padding: 15px 0;
     border-radius: 10px;
     border: none;
-    background-color: #cfcfcf;
+    background-color: #e2e2e2;
     transition: 0.2s;
 }
 
 .submit:hover{
-    transform: scale(1.05);
+    transform: scale(1.03);
+    background-color: #c2c2c2;
 }

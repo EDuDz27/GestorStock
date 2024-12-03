@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GestorStock</title>
     <link rel="stylesheet" href="./css/style.css">
-    
+
 </head>
 
 <body>
@@ -25,6 +25,7 @@
                         <label for="nome">Produto</label>
                         <input type="text" name="nome" required>
                     </div>
+                    <span></span>
                     <div class="entrada">
                         <label for="categoria">Categoria</label>
                         <input type="text" name="categoria" required>
@@ -46,8 +47,12 @@
                         <input type="text" name="descricao">
                     </div>
                     <div class="entrada">
-                        <label for="tipo">Tipo de Movimentação</label>
-                        <input type="text" name="tipo" required>
+                        <label for="descricao">Tipo Movimentação</label>
+                        <input list="tipos" name="tipo" id="tipo">
+                        <datalist id="tipo">
+                            <option value="0 - Entrada">
+                            <option value="1 - Saida">
+                        </datalist>
                     </div>
                 </div>
                 <input class="submit" type="submit" value="Enviar Produto">
@@ -72,4 +77,5 @@
     </main>
     <script src="./js/script.js"></script>
 </body>
+
 </html>
