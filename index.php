@@ -1,6 +1,6 @@
 <?php
 require_once 'db/Conexao.php';
-require_once 'models/Produto.php';
+require_once '/models/Produto.php';
 require_once 'models/Movimentacao.php';
 require_once 'models/Categoria.php';
 require_once 'models/Fornecedor.php';

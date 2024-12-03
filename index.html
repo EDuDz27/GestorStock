@@ -6,47 +6,70 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GestorStock</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./css/style.css">
+    
 </head>
 
 <body>
-    <div class="container-post">
-        <div class="titulo-aba" for="container-post">Entrada de Produto</div>
-        <form action="post">
-            <div class="campos">
-                <div class="entrada">
-                    <label for="nome">Produto</label>
-                    <input type="text" name="nome" required>
+    <main>
+        <nav>
+            <a href="javascript:void(0);" onclick="showForm(1)">Adicionar</a>
+            <a href="javascript:void(0);" onclick="showForm(2)">Pesquisar</a>
+            <a href="javascript:void(0);" onclick="showForm(3)">Alterar</a>
+            <a href="javascript:void(0);" onclick="showForm(4)">Remover</a>
+        </nav>
+        <div id="form1" class="container">
+            <form action="post">
+                <div class="campos">
+                    <div class="entrada">
+                        <label for="nome">Produto</label>
+                        <input type="text" name="nome" required>
+                    </div>
+                    <div class="entrada">
+                        <label for="categoria">Categoria</label>
+                        <input type="text" name="categoria" required>
+                    </div>
+                    <div class="entrada">
+                        <label for="fornecedor">Fornecedor</label>
+                        <input type="text" name="fornecedor" required>
+                    </div>
+                    <div class="entrada">
+                        <label for="valor">Valor Unidade</label>
+                        <input type="text" name="valor" required>
+                    </div>
+                    <div class="entrada">
+                        <label for="quantidade">Quantidade</label>
+                        <input type="text" name="quantidade" required>
+                    </div>
+                    <div class="entrada">
+                        <label for="descricao">Descrição</label>
+                        <input type="text" name="descricao">
+                    </div>
+                    <div class="entrada">
+                        <label for="tipo">Tipo de Movimentação</label>
+                        <input type="text" name="tipo" required>
+                    </div>
                 </div>
-                <span></span>
-                <div class="entrada">
-                    <label for="categoria">Categoria</label>
-                    <input type="text" name="categoria" required>
-                </div>
-                <div class="entrada">
-                    <label for="fornecedor">Fornecedor</label>
-                    <input type="text" name="fornecedor" required>
-                </div>
-                <div class="entrada">
-                    <label for="valor">Valor Unidade</label>
-                    <input type="text" name="valor" required>
-                </div>
-                <div class="entrada">
-                    <label for="quantidade">Quantidade</label>
-                    <input type="text" name="quantidade" required>
-                </div>
-                <div class="entrada">
-                    <label for="descricao">Descrição</label>
-                    <input type="text" name="descricao">
-                </div>
-                <div class="entrada">
-                    <label for="tipo">Tipo de Movimentação</label>
-                    <input type="text" name="tipo" required>
-                </div>
-            </div>
-            <input class="submit" type="submit" value="Enviar Produto">
-        </form>
-    </div>
-</body>
+                <input class="submit" type="submit" value="Enviar Produto">
+            </form>
+        </div>
 
+        <div id="form2" class="container">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae explicabo nam repellat, odit similique
+                iste, neque harum unde aliquid molestias sequi fugiat soluta eius at expedita tempore corporis alias
+                accusantium.</p>
+        </div>
+        <div id="form3" class="container">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae explicabo nam repellat, odit similique
+                iste, neque harum unde aliquid molestias sequi fugiat soluta eius at expedita tempore corporis alias
+                accusantium.</p>
+        </div>
+        <div id="form4" class="container">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae explicabo nam repellat, odit similique
+                iste, neque harum unde aliquid molestias sequi fugiat soluta eius at expedita tempore corporis alias
+                accusantium.</p>
+        </div>
+    </main>
+    <script src="./js/script.js"></script>
+</body>
 </html>
