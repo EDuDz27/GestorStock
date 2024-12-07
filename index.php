@@ -1,3 +1,18 @@
+<?php
+require_once 'db\Conexao.php';
+require_once 'models\Categoria.php';
+require_once 'models\Fornecedor.php';
+
+use models\Categoria;
+use models\Fornecedor;
+
+$categoria = new Categoria();
+$fornecedor = new Fornecedor();
+
+$categorias = $categoria->buscarTodos();
+$fornecedores = $fornecedor->buscarTodos();
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -19,53 +34,73 @@
             <a href="javascript:void(0);" onclick="showForm(4)">Remover</a>
         </nav>
         <div id="form1" class="container">
-            <form action="index.php" method="post">
+            <form action="processar.php" method="post">
                 <div class="campos">
                     <div class="entrada">
                         <label for="nome">Produto</label>
                         <input type="text" name="nome" required>
                     </div>
+
+                    <span></span>
+
                     <div class="entrada">
                         <label for="categoria">Categoria</label>
-                        <input type="text" name="categoria" required>
+                        <select name="categoria" id="categoria" required>
+                            <option value="">Selecione uma categoria</option>
+                            <?php foreach ($categorias as $categoria): ?>
+                                <option value="<?= htmlspecialchars($categoria['id']) ?>"><?= htmlspecialchars($categoria['nome']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
+
+                    <div class="entrada">
+                        <label for="tipo">Tipo Movimentação</label>
+                        <select name="tipo" id="tipo" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="0 - Entrada">Entrada</option>
+                            <option value="1 - Entrada">Saída</option>
+                        </select>
+                    </div>
+
                     <div class="entrada">
                         <label for="fornecedor">Fornecedor</label>
-                        <input type="text" name="fornecedor" required>
+                        <select name="fornecedor" id="fornecedor" required>
+                            <option value="">Selecione um fornecedor</option>
+                            <?php foreach ($fornecedores as $fornecedor): ?>
+                                <option value="<?= htmlspecialchars($fornecedor['id']) ?>"><?= htmlspecialchars($fornecedor['nome']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
-                    <div class="entrada">
-                        <label for="valor">Valor Unidade</label>
-                        <input type="text" name="valor" required>
-                    </div>
-                    <div class="entrada">
-                        <label for="quantidade">Quantidade</label>
-                        <input type="text" name="quantidade" required>
-                    </div>
+
                     <div class="entrada">
                         <label for="descricao">Descrição</label>
                         <input type="text" name="descricao">
                     </div>
+
                     <div class="entrada">
-                        <label for="descricao">Tipo Movimentação</label>
-                        <input list="tipos" name="tipo" id="tipo">
-                        <datalist id="tipo">
-                            <option value="0 - Entrada">
-                            <option value="1 - Saida">
-                        </datalist>
+                        <label for="valor">Valor Unidade</label>
+                        <input type="number" name="valor" required>
                     </div>
+
+                    <div class="entrada">
+                        <label for="quantidade">Quantidade</label>
+                        <input type="text" name="quantidade" required>
+                    </div>
+                    
                 </div>
                 <input class="submit" type="submit" value="Enviar Produto">
             </form>
         </div>
 
         <div id="form2" class="container">
-            <form action="index.php" method="get">
+            <form action="processar.php" method="get">
                 <div class="campos">
                     <div class="pesquisa">
                         <label for="nome">Pesquisar Produto</label>
                         <input type="text" name="nome" required>
                     </div>
                     <div id="resultados" class="resultados-container">
+                        <!-- LISTA AQUI -->
                     </div>
                 </div>
                 <input class="submit" type="submit" value="Pesquisar">
@@ -73,7 +108,7 @@
         </div>
 
         <div id="form3" class="container">
-            <form action="index.php" method="alter">
+            <form action="processar.php" method="alter">
                 <div class="campos">
                     <div class="entrada">
                         <label for="nome">Produto</label>
@@ -101,7 +136,7 @@
         </div>
 
         <div id="form4" class="container">
-            <form action="index.php" method="delete">
+            <form action="processar.php" method="delete">
                 <div class="campos">
                     <div class="entrada">
                         <label for="nome">Produto</label>

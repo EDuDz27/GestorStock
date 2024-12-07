@@ -1,6 +1,6 @@
 <?php
 require_once 'db/Conexao.php';
-require_once '/models/Produto.php';
+require_once 'models/Produto.php';
 require_once 'models/Movimentacao.php';
 require_once 'models/Categoria.php';
 require_once 'models/Fornecedor.php';
@@ -20,19 +20,17 @@ $ordem = new Ordem();
 
 // Método POST - (Registrar movimentação - Entrada/Saida)
 if ($method == 'POST') {
-    // Verificar se os dados foram enviados via formulário
     if ($_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded') {
-        // Receber os dados do formulário via POST
         $nome = $_POST['nome'] ?? null;
         $descricao = $_POST['descricao'] ?? null; // Descrição é opcional
-        $preco = $_POST['preco'] ?? null;
+        $valor = $_POST['valor'] ?? null;
         $quantidade = $_POST['quantidade'] ?? null;
         $tipo = $_POST['tipo'] ?? null; // "0 - Entrada" ou "1 - Saída"
         $id_categoria = $_POST['categoria'] ?? null;
         $id_fornecedor = $_POST['fornecedor'] ?? null;
 
-        // Verificações de campos obrigatórios
-        if (!$nome || !$preco || !$quantidade || !$tipo || !$id_categoria) {
+        // Campos obrigatórios
+        if (!$nome || !$valor || !$quantidade || !$tipo || !$id_categoria) {
             header("Content-Type: application/json; charset=UTF-8");
             echo json_encode(['error' => 'Campos obrigatórios estão faltando.']);
             exit();
@@ -45,7 +43,6 @@ if ($method == 'POST') {
             exit();
         }
 
-        // A data da ordem será a data atual
         $data_ordem = date('Y-m-d');
 
         // Validação de fornecedor para tipo "0 - Entrada"
@@ -63,11 +60,13 @@ if ($method == 'POST') {
             $id_produto = $produto_existente['id'];
             $quantidade_estoque = $produto_existente['quantidade_estoque'];
 
-            if ($tipo === '0 - Entrada') { // Entrada
+            if ($tipo === '0 - Entrada') {
                 $novo_estoque = $quantidade_estoque + $quantidade;
-            } elseif ($tipo === '1 - Saída') { // Saída
+
+            } elseif ($tipo === '1 - Saída') {
                 if ($quantidade_estoque >= $quantidade) {
                     $novo_estoque = $quantidade_estoque - $quantidade;
+                    
                 } else {
                     header("Content-Type: application/json; charset=UTF-8");
                     echo json_encode(['error' => 'Quantidade insuficiente no estoque.']);
@@ -79,16 +78,16 @@ if ($method == 'POST') {
             $produto->atualizarEstoque($id_produto, $novo_estoque);
         } else {
             // Produto não existe, inserir novo produto
-            $id_produto = $produto->inserir($nome, $descricao, $preco, $quantidade, $id_categoria, $id_fornecedor);
+            $id_produto = $produto->inserir($nome, $descricao, $valor, $quantidade, $id_categoria, $id_fornecedor);
             $tipo = '0 - Entrada';  // Considera a entrada como padrão, mas pode ser ajustado
             $novo_estoque = $quantidade; // A quantidade inicial será a inserida
         }
 
         // Calcular o valor da ordem
-        $valor = $preco * $quantidade;
+        $valor = $valor * $quantidade;
 
         // Inserir a ordem
-        $id_ordem = $ordem->inserir($tipo, $data_ordem, $id_fornecedor, null, $valor);
+        $id_ordem = $ordem->inserir($tipo, $data_ordem, $id_fornecedor, $valor);
 
         // Registrar a movimentação
         $movimentacao = new Movimentacao();
@@ -136,18 +135,18 @@ if ($method == 'PUT') {
         $id = $_POST['id'] ?? null;
         $nome = $_POST['nome'] ?? null;
         $descricao = $_POST['descricao'] ?? null; 
-        $preco = $_POST['preco'] ?? null;
+        $valor = $_POST['valor'] ?? null;
         $quantidade = $_POST['quantidade'] ?? null;
         $id_categoria = $_POST['categoria'] ?? null;
 
-        if (!$id || !$nome || !$preco || !$quantidade || !$id_categoria) {
+        if (!$id || !$nome || !$valor || !$quantidade || !$id_categoria) {
             header("Content-Type: application/json; charset=UTF-8");
             echo json_encode(['error' => 'Campos obrigatórios estão faltando.']);
             exit();
         }
 
         // Atualizar o produto
-        $produto_atualizado = $produto->atualizar($id, $nome, $descricao, $preco, $quantidade, $id_categoria);
+        $produto_atualizado = $produto->atualizar($id, $nome, $descricao, $valor, $quantidade, $id_categoria);
         if ($produto_atualizado) {
             header("Content-Type: application/json; charset=UTF-8");
             echo json_encode(['message' => 'Produto atualizado com sucesso.']);
