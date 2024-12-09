@@ -37,7 +37,7 @@ if ($method == 'POST') {
         }
 
         // Validação do tipo
-        if ($tipo !== '0 - Entrada' && $tipo !== '1 - Saída') {
+        if ($tipo !== '0 - Entrada' && $tipo !== '1 - Saida') {
             header("Content-Type: application/json; charset=UTF-8");
             echo json_encode(['error' => 'Tipo inválido. O tipo deve ser "0 - Entrada" ou "1 - Saída".']);
             exit();
@@ -63,7 +63,7 @@ if ($method == 'POST') {
             if ($tipo === '0 - Entrada') {
                 $novo_estoque = $quantidade_estoque + $quantidade;
 
-            } elseif ($tipo === '1 - Saída') {
+            } elseif ($tipo === '1 - Saida') {
                 if ($quantidade_estoque >= $quantidade) {
                     $novo_estoque = $quantidade_estoque - $quantidade;
                     

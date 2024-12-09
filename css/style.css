@@ -71,7 +71,8 @@ main{
     flex-direction: column;
 }
 
-.entrada input{
+.entrada input,
+.entrada select{
     padding: 15px;
     border:none;
     background-color: #e7e7e7;

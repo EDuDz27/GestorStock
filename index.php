@@ -2,15 +2,20 @@
 require_once 'db\Conexao.php';
 require_once 'models\Categoria.php';
 require_once 'models\Fornecedor.php';
+require_once 'models\Produto.php';
 
 use models\Categoria;
 use models\Fornecedor;
+use models\Produto;
+
 
 $categoria = new Categoria();
 $fornecedor = new Fornecedor();
+$produto = new Produto();
 
 $categorias = $categoria->buscarTodos();
 $fornecedores = $fornecedor->buscarTodos();
+$produtos = $produto->buscarTodos();
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +43,12 @@ $fornecedores = $fornecedor->buscarTodos();
                 <div class="campos">
                     <div class="entrada">
                         <label for="nome">Produto</label>
-                        <input type="text" name="nome" required>
+                        <input list="produtos" type="text" name="nome" required>
+                        <datalist id="produtos">
+                        <?php foreach ($produtos as $produto): ?>
+                            <option value="<?php echo htmlspecialchars($produto['nome']); ?>">
+                        <?php endforeach; ?>
+                        </datalist>
                     </div>
 
                     <span></span>
@@ -58,7 +68,7 @@ $fornecedores = $fornecedor->buscarTodos();
                         <select name="tipo" id="tipo" required>
                             <option value="">Selecione uma categoria</option>
                             <option value="0 - Entrada">Entrada</option>
-                            <option value="1 - Entrada">Saída</option>
+                            <option value="1 - Saida">Saída</option>
                         </select>
                     </div>
 
@@ -138,13 +148,23 @@ $fornecedores = $fornecedor->buscarTodos();
         <div id="form4" class="container">
             <form action="processar.php" method="delete">
                 <div class="campos">
-                    <div class="entrada">
+                <div class="entrada">
                         <label for="nome">Produto</label>
-                        <input type="text" name="nome" required>
+                        <input list="produtos" type="text" name="nome" required>
+                        <datalist id="produtos">
+                        <?php foreach ($produtos as $produto): ?>
+                            <option value="<?php echo htmlspecialchars($produto['nome']); ?>">
+                        <?php endforeach; ?>
+                        </datalist>
                     </div>
                     <div class="entrada">
                         <label for="categoria">Categoria</label>
-                        <input type="text" name="categoria" required>
+                        <select name="categoria" id="categoria" required>
+                            <option value="">Selecione uma categoria</option>
+                            <?php foreach ($categorias as $categoria): ?>
+                                <option value="<?= htmlspecialchars($categoria['id']) ?>"><?= htmlspecialchars($categoria['nome']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
                 <input class="submit" type="submit" value="Remover">
