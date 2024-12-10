@@ -18,6 +18,8 @@ $headers = getallheaders();
 $produto = new Produto();
 $ordem = new Ordem();
 
+$method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
+
 // Método POST - (Registrar movimentação - Entrada/Saida)
 if ($method == 'POST') {
     if ($_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded') {
@@ -31,14 +33,12 @@ if ($method == 'POST') {
 
         // Campos obrigatórios
         if (!$nome || !$valor || !$quantidade || !$tipo || !$id_categoria) {
-            header("Content-Type: application/json; charset=UTF-8");
             echo json_encode(['error' => 'Campos obrigatórios estão faltando.']);
             exit();
         }
 
         // Validação do tipo
         if ($tipo !== '0 - Entrada' && $tipo !== '1 - Saida') {
-            header("Content-Type: application/json; charset=UTF-8");
             echo json_encode(['error' => 'Tipo inválido. O tipo deve ser "0 - Entrada" ou "1 - Saída".']);
             exit();
         }
@@ -47,7 +47,6 @@ if ($method == 'POST') {
 
         // Validação de fornecedor para tipo "0 - Entrada"
         if ($tipo === '0 - Entrada' && !$id_fornecedor) {
-            header("Content-Type: application/json; charset=UTF-8");
             echo json_encode(['error' => 'Fornecedor é obrigatório para entrada.']);
             exit();
         }
@@ -61,28 +60,29 @@ if ($method == 'POST') {
             $quantidade_estoque = $produto_existente['quantidade_estoque'];
 
             if ($tipo === '0 - Entrada') {
+                $tipo = 0;
                 $novo_estoque = $quantidade_estoque + $quantidade;
 
             } elseif ($tipo === '1 - Saida') {
+                $tipo = 1;
                 if ($quantidade_estoque >= $quantidade) {
                     $novo_estoque = $quantidade_estoque - $quantidade;
                     
                 } else {
-                    header("Content-Type: application/json; charset=UTF-8");
                     echo json_encode(['error' => 'Quantidade insuficiente no estoque.']);
                     exit();
                 }
             }
 
-            // Atualizar o estoque do produto
             $produto->atualizarEstoque($id_produto, $novo_estoque);
+            // Atualizar o estoque do produto
         } else {
             // Produto não existe, inserir novo produto
             $id_produto = $produto->inserir($nome, $descricao, $valor, $quantidade, $id_categoria, $id_fornecedor);
-            $tipo = '0 - Entrada';  // Considera a entrada como padrão, mas pode ser ajustado
+            $tipo = 0;  // Considera a entrada como padrão, mas pode ser ajustado
             $novo_estoque = $quantidade; // A quantidade inicial será a inserida
         }
-
+        
         // Calcular o valor da ordem
         $valor = $valor * $quantidade;
 
@@ -94,12 +94,10 @@ if ($method == 'POST') {
         $movimentacao->registrarMovimentacao($id_produto, $tipo, $quantidade, $id_ordem);
 
         // Resposta de sucesso
-        header("Content-Type: application/json; charset=UTF-8");
         echo json_encode(['message' => 'Movimentação registrada com sucesso!', 'estoque_atual' => $novo_estoque]);
         exit();
     } else {
         // Retornar erro se o tipo de conteúdo não for x-www-form-urlencoded
-        header("Content-Type: application/json; charset=UTF-8");
         echo json_encode(['error' => 'Formato de conteúdo não suportado.']);
         exit();
     }
@@ -133,14 +131,13 @@ if ($method == 'GET') {
 if ($method == 'PUT') {
     if ($_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded') {
         $id = $_POST['id'] ?? null;
-        $nome = $_POST['nome'] ?? null;
+        $nome = $_POST['novo-nome'] ?? null;
         $descricao = $_POST['descricao'] ?? null; 
         $valor = $_POST['valor'] ?? null;
         $quantidade = $_POST['quantidade'] ?? null;
         $id_categoria = $_POST['categoria'] ?? null;
 
         if (!$id || !$nome || !$valor || !$quantidade || !$id_categoria) {
-            header("Content-Type: application/json; charset=UTF-8");
             echo json_encode(['error' => 'Campos obrigatórios estão faltando.']);
             exit();
         }
@@ -148,15 +145,12 @@ if ($method == 'PUT') {
         // Atualizar o produto
         $produto_atualizado = $produto->atualizar($id, $nome, $descricao, $valor, $quantidade, $id_categoria);
         if ($produto_atualizado) {
-            header("Content-Type: application/json; charset=UTF-8");
             echo json_encode(['message' => 'Produto atualizado com sucesso.']);
         } else {
-            header("Content-Type: application/json; charset=UTF-8");
             echo json_encode(['error' => 'Falha ao atualizar o produto.']);
         }
         exit();
     } else {
-        header("Content-Type: application/json; charset=UTF-8");
         echo json_encode(['error' => 'Formato de conteúdo não suportado.']);
         exit();
     }
