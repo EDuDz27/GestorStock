@@ -109,36 +109,34 @@ if ($method == 'GET') {
         $id = $_POST['id'] ?? null;
         if ($id) {
             $movimentacao = new Movimentacao();
-            $movimentacoes = $movimentacao->buscarMovimentacoesPorProduto($id);
-            $ordens = $ordem->buscarOrdemPorProduto($id);
+            $ordem = new Ordem();
             $fornecedor = new Fornecedor();
-            
+            $movimentacoes = $movimentacao->buscarMovimentacoesPorProduto($id);            
 
             if (!empty($movimentacoes)) {
                 foreach ($movimentacoes as $mov) {
-                    echo "<li>Tipo: " . htmlspecialchars($mov['tipo']) .
-                        ", Quantidade: " . htmlspecialchars($mov['quantidade']) .
-                        ", Data: " . htmlspecialchars($mov['data_mov']) . "</li>";
+                    $ordemInfo = $ordem->buscarPorId($mov['id_ordem']);
+                    $fornecedorInfo = $fornecedor->buscarPorId($ordemInfo['id_fornecedor']);
+
+                    echo "<p>Data: " . htmlspecialchars($mov['data_mov']) . 
+                        " | Tipo: " . htmlspecialchars($mov['tipo']) . 
+                        " | Quantidade: " . htmlspecialchars($mov['quantidade']) . 
+                        (isset($ordemInfo['valor'], $fornecedorInfo['nome']) 
+                            ? " | Fornecedor: " . htmlspecialchars($fornecedorInfo['nome']) .
+                            " | Valor Total: " . htmlspecialchars($ordemInfo['valor']) 
+                            : "") . 
+                        "</p>";
                 }
             } else {
                 echo "<p>Nenhuma movimentação encontrada para o produto.</p>";
             }
 
-            if (!empty($ordens)) {
-                foreach ($ordens as $ordem) {
-                    $nomeFornecedor = $fornecedor->buscarPorId($ordem['id_fornecedor']);
-                    echo "<li>Fornecedor: " . htmlspecialchars($nomeFornecedor['nome']) . 
-                    ", Valor Total: " . htmlspecialchars($ordem['valor']) . "</li>";
-                }
-            } else {
-                echo "<p>Nenhuma ordem encontrada para o produto.</p>";
-            }
         } else {
             echo "<p>Produto não encontrado.</p>";
         }
         exit();
     }
-    }
+}
 
 // Método PUT - Atualizar (Modificar um produto)
 if ($method == 'PUT') {

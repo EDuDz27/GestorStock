@@ -26,6 +26,14 @@ class Ordem
         return $this->pdo->lastInsertId();
     }
 
+    public function buscarPorId($id) {
+        $sql = "SELECT * FROM ordem WHERE id = :id ORDER BY data_ordem DESC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function buscarOrdemPorProduto($id_produto) {
         $sql = "SELECT DISTINCT id_ordem FROM movimentacao WHERE id_produto = :id_produto";
         $stmt = $this->pdo->prepare($sql);

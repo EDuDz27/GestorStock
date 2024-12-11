@@ -152,7 +152,7 @@ $produtos = $produto->buscarTodos();
                     </div>
                     <div class="entrada">
                         <label for="valor">Valor Unidade</label>
-                        <input type="number" name="valor" required>
+                        <input type="number" name="valor" step="0.01" min="0" required>
                     </div>
 
                     <div class="entrada">

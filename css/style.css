@@ -39,6 +39,7 @@ main{
     background-color: white;
     border-radius: 10px;
     max-width: 900px;
+    min-height: 600px;
     padding: 30px
 }
 
