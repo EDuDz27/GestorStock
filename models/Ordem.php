@@ -25,4 +25,29 @@ class Ordem
         $stmt->execute();
         return $this->pdo->lastInsertId();
     }
+
+    public function buscarOrdemPorProduto($id_produto) {
+        $sql = "SELECT DISTINCT id_ordem FROM movimentacao WHERE id_produto = :id_produto";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id_produto', $id_produto);
+        $stmt->execute();
+        
+        $ordensRelacionadas = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        if (!$ordensRelacionadas) {
+            $ordensRelacionadas = [];
+        }
+
+        // Deletar as ordens relacionadas, usando os IDs armazenados
+        if (!empty($ordensRelacionadas)) {
+            // Usamos o IN para deletar todas as ordens cujos IDs estão no array $ordensRelacionadas
+            $inQuery = implode(',', array_fill(0, count($ordensRelacionadas), '?'));
+            $stmt = $this->pdo->prepare("SELECT * FROM ordem WHERE id IN ($inQuery)");
+            $stmt->execute($ordensRelacionadas);
+            return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        }
+
+
+
+    }
 }

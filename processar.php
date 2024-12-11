@@ -105,27 +105,40 @@ if ($method == 'POST') {
 
 // Método GET - Ler (Buscar produtos)
 if ($method == 'GET') {
-    // Verificar se um ID específico foi passado na URL
-    $id = $_GET['id'] ?? null;
-    
-    if ($id) {
-        // Buscar um produto específico pelo ID
-        $produto_encontrado = $produto->buscarPorId($id);
-        if ($produto_encontrado) {
-            header("Content-Type: application/json; charset=UTF-8");
-            echo json_encode($produto_encontrado);
+    if ($_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded') {
+        $id = $_POST['id'] ?? null;
+        if ($id) {
+            $movimentacao = new Movimentacao();
+            $movimentacoes = $movimentacao->buscarMovimentacoesPorProduto($id);
+            $ordens = $ordem->buscarOrdemPorProduto($id);
+            $fornecedor = new Fornecedor();
+            
+
+            if (!empty($movimentacoes)) {
+                foreach ($movimentacoes as $mov) {
+                    echo "<li>Tipo: " . htmlspecialchars($mov['tipo']) .
+                        ", Quantidade: " . htmlspecialchars($mov['quantidade']) .
+                        ", Data: " . htmlspecialchars($mov['data_mov']) . "</li>";
+                }
+            } else {
+                echo "<p>Nenhuma movimentação encontrada para o produto.</p>";
+            }
+
+            if (!empty($ordens)) {
+                foreach ($ordens as $ordem) {
+                    $nomeFornecedor = $fornecedor->buscarPorId($ordem['id_fornecedor']);
+                    echo "<li>Fornecedor: " . htmlspecialchars($nomeFornecedor['nome']) . 
+                    ", Valor Total: " . htmlspecialchars($ordem['valor']) . "</li>";
+                }
+            } else {
+                echo "<p>Nenhuma ordem encontrada para o produto.</p>";
+            }
         } else {
-            header("Content-Type: application/json; charset=UTF-8");
-            echo json_encode(['error' => 'Produto não encontrado.']);
+            echo "<p>Produto não encontrado.</p>";
         }
-    } else {
-        // Buscar todos os produtos
-        $produtos = $produto->buscarTodos();
-        header("Content-Type: application/json; charset=UTF-8");
-        echo json_encode($produtos);
+        exit();
     }
-    exit();
-}
+    }
 
 // Método PUT - Atualizar (Modificar um produto)
 if ($method == 'PUT') {

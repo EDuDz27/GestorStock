@@ -21,6 +21,14 @@ class Movimentacao {
         $stmt->bindParam(':id_ordem', $id_ordem);
         $stmt->execute();
     }
+
+    public function buscarMovimentacoesPorProduto($id_produto) {
+        $sql = "SELECT * FROM movimentacao WHERE id_produto = :id_produto ORDER BY data_mov DESC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id_produto', $id_produto);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 
