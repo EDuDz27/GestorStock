@@ -47,6 +47,14 @@ class Produto {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function estoqueAtual($id) {
+        $sql = "SELECT quantidade_estoque FROM produto WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function atualizarEstoque($id_produto, $novo_estoque) {
         $sql = "UPDATE produto SET quantidade_estoque = :novo_estoque WHERE id = :id_produto";
         $stmt = $this->pdo->prepare($sql);

@@ -1,0 +1,25 @@
+.tabela-resultados {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tabela-resultados th,
+.tabela-resultados td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.tabela-resultados th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.tabela-resultados tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.tabela-resultados tr:hover {
+    background-color: #f1f1f1;
+}

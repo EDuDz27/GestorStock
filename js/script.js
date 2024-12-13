@@ -1,14 +1,33 @@
-// Função para mostrar o formulário correto
 function showForm(formNumber) {
-    // Esconde todos os formulários
     const forms = document.querySelectorAll('.container');
     forms.forEach(form => form.classList.remove('active-form'));
 
-    // Mostra o formulário selecionado
     const selectedForm = document.getElementById('form' + formNumber);
     selectedForm.classList.add('active-form');
 }
-// Exibe o primeiro formulário por padrão
-showForm(1);
 
+function handleFormSubmit(event) {
+    event.preventDefault();
 
+    const formData = new FormData(event.target);
+    formData.append('_method', 'GET');
+
+    fetch('processar.php', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('resultados').innerHTML = data;
+        })
+        .catch(error => {
+            document.getElementById('resultados').innerHTML = "<p>Ocorreu um erro. Tente novamente.</p>";
+        });
+}
+
+function init() {
+    showForm(1);
+
+    document.getElementById('formPesquisarProduto').addEventListener('submit', handleFormSubmit);
+}
+init();

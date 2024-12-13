@@ -67,7 +67,7 @@ if ($method == 'POST') {
                 $tipo = 1;
                 if ($quantidade_estoque >= $quantidade) {
                     $novo_estoque = $quantidade_estoque - $quantidade;
-                    
+
                 } else {
                     echo json_encode(['error' => 'Quantidade insuficiente no estoque.']);
                     exit();
@@ -82,7 +82,7 @@ if ($method == 'POST') {
             $tipo = 0;  // Considera a entrada como padrão, mas pode ser ajustado
             $novo_estoque = $quantidade; // A quantidade inicial será a inserida
         }
-        
+
         // Calcular o valor da ordem
         $valor = $valor * $quantidade;
 
@@ -105,37 +105,54 @@ if ($method == 'POST') {
 
 // Método GET - Ler (Buscar produtos)
 if ($method == 'GET') {
-    if ($_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded') {
-        $id = $_POST['id'] ?? null;
-        if ($id) {
-            $movimentacao = new Movimentacao();
-            $ordem = new Ordem();
-            $fornecedor = new Fornecedor();
-            $movimentacoes = $movimentacao->buscarMovimentacoesPorProduto($id);            
+    $id = $_POST['id'] ?? null;
+    if ($id) {
+        $movimentacao = new Movimentacao();
+        $ordem = new Ordem();
+        $fornecedor = new Fornecedor();
+        $produtoQuantidade = $produto->estoqueAtual($id);
+        $movimentacoes = $movimentacao->buscarMovimentacoesPorProduto($id);
 
-            if (!empty($movimentacoes)) {
-                foreach ($movimentacoes as $mov) {
-                    $ordemInfo = $ordem->buscarPorId($mov['id_ordem']);
-                    $fornecedorInfo = $fornecedor->buscarPorId($ordemInfo['id_fornecedor']);
+        echo "<link rel='stylesheet' href='./css/pesquisar-style.css'>" . 
+                "<h4>Quantidade atual em estoque: " . $produtoQuantidade['quantidade_estoque'] . "</h4>";
 
-                    echo "<p>Data: " . htmlspecialchars($mov['data_mov']) . 
-                        " | Tipo: " . htmlspecialchars($mov['tipo']) . 
-                        " | Quantidade: " . htmlspecialchars($mov['quantidade']) . 
-                        (isset($ordemInfo['valor'], $fornecedorInfo['nome']) 
-                            ? " | Fornecedor: " . htmlspecialchars($fornecedorInfo['nome']) .
-                            " | Valor Total: " . htmlspecialchars($ordemInfo['valor']) 
-                            : "") . 
-                        "</p>";
-                }
-            } else {
-                echo "<p>Nenhuma movimentação encontrada para o produto.</p>";
+        if (!empty($movimentacoes)) {
+            echo "<table class='tabela-resultados'>" .
+                    "<thead>" .
+                        "<tr>" .
+                            "<th>Data</th>" .
+                            "<th>Tipo</th>" .
+                            "<th>Quantidade</th>" .
+                            "<th>Fornecedor</th>" .
+                            "<th>Valor Total</th>" .
+                        "</tr>" .
+                        "</thead>" .
+                    "<tbody>";
+
+            foreach ($movimentacoes as $mov) {
+                $ordemInfo = $ordem->buscarPorId($mov['id_ordem']);
+                $fornecedorInfo = $fornecedor->buscarPorId($ordemInfo['id_fornecedor']);
+
+                echo "<tr>" .
+                    "<td>" . htmlspecialchars($mov['data_mov']) . "</td>" .
+                    "<td>" . htmlspecialchars($mov['tipo']) . "</td>" .
+                    "<td>" . htmlspecialchars($mov['quantidade']) . "</td>" .
+                    "<td>" . htmlspecialchars($fornecedorInfo['nome']) . "</td>" .
+                    "<td>" . htmlspecialchars($ordemInfo['valor']) . "</td>" .
+                    "</tr>";
             }
 
+            echo "</tbody>" .
+                "</table>";
+
         } else {
-            echo "<p>Produto não encontrado.</p>";
+            echo "<p>Nenhuma movimentação encontrada para o produto.</p>";
         }
-        exit();
+    } else {
+        echo "<p>Produto não encontrado.</p>";
     }
+    exit();
+
 }
 
 // Método PUT - Atualizar (Modificar um produto)
@@ -143,7 +160,7 @@ if ($method == 'PUT') {
     if ($_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded') {
         $id = $_POST['id'] ?? null;
         $nome = $_POST['novo-nome'] ?? null;
-        $descricao = $_POST['descricao'] ?? null; 
+        $descricao = $_POST['descricao'] ?? null;
         $valor = $_POST['valor'] ?? null;
         $quantidade = $_POST['quantidade'] ?? null;
         $id_categoria = $_POST['categoria'] ?? null;

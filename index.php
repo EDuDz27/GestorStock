@@ -39,8 +39,8 @@ $produtos = $produto->buscarTodos();
             <a href="javascript:void(0);" onclick="showForm(4)">Remover</a>
         </nav>
         <div id="form1" class="container">
-        <form action="processar.php" method="POST">
-        <input type="hidden" name="_method" value="POST">
+            <form action="processar.php" method="POST">
+                <input type="hidden" name="_method" value="POST">
                 <div class="campos">
                     <div class="entrada">
                         <label for="nome">Produto</label>
@@ -48,7 +48,7 @@ $produtos = $produto->buscarTodos();
                         <datalist id="produtos">
                             <?php foreach ($produtos as $produto): ?>
                                 <option value="<?php echo htmlspecialchars($produto['nome']); ?>">
-                            <?php endforeach; ?>
+                                <?php endforeach; ?>
                         </datalist>
                     </div>
 
@@ -59,7 +59,9 @@ $produtos = $produto->buscarTodos();
                         <select name="categoria" id="categoria" required>
                             <option value="">Selecione uma categoria</option>
                             <?php foreach ($categorias as $categoria): ?>
-                                <option value="<?= htmlspecialchars($categoria['id']) ?>"><?= htmlspecialchars($categoria['nome']) ?></option>
+                                <option value="<?= htmlspecialchars($categoria['id']) ?>">
+                                    <?= htmlspecialchars($categoria['nome']) ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -78,7 +80,9 @@ $produtos = $produto->buscarTodos();
                         <select name="fornecedor" id="fornecedor" required>
                             <option value="">Selecione um fornecedor</option>
                             <?php foreach ($fornecedores as $fornecedor): ?>
-                            <option value="<?= htmlspecialchars($fornecedor['id']) ?>"><?= htmlspecialchars($fornecedor['nome']) ?></option>
+                                <option value="<?= htmlspecialchars($fornecedor['id']) ?>">
+                                    <?= htmlspecialchars($fornecedor['nome']) ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -90,7 +94,7 @@ $produtos = $produto->buscarTodos();
 
                     <div class="entrada">
                         <label for="valor">Valor Unidade</label>
-                        <input type="number" name="valor" required>
+                        <input type="number" name="valor" step="0.01" min="0" required>
                     </div>
 
                     <div class="entrada">
@@ -104,23 +108,26 @@ $produtos = $produto->buscarTodos();
         </div>
 
         <div id="form2" class="container">
-            <form action="processar.php" method="POST" target="resultados">
-            <input type="hidden" name="_method" value="GET">
+            <form id="formPesquisarProduto" action="processar.php" method="POST">
+                <input type="hidden" name="_method" value="GET">
                 <div class="campos">
                     <div class="entrada">
                         <label for="id">Pesquisar Produto</label>
                         <select name="id" id="id" required>
                             <option value="">Selecione um Produto</option>
                             <?php foreach ($produtos as $produto): ?>
-                            <option value="<?= htmlspecialchars($produto['id']) ?>"><?= htmlspecialchars($produto['nome']) ?></option>
+                                <option value="<?= htmlspecialchars($produto['id']) ?>">
+                                    <?= htmlspecialchars($produto['nome']) ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
                 <input class="submit" type="submit" value="Pesquisar">
             </form>
+
             <div id="resultados" class="resultados-container">
-                <iframe name="resultados" style="border: none; width: 100%;"></iframe>
+                <!-- Tabela resultados -->
             </div>
         </div>
 
@@ -133,7 +140,9 @@ $produtos = $produto->buscarTodos();
                         <select name="id" id="id" required>
                             <option value="">Selecione um Produto</option>
                             <?php foreach ($produtos as $produto): ?>
-                            <option value="<?= htmlspecialchars($produto['id']) ?>"><?= htmlspecialchars($produto['nome']) ?></option>
+                                <option value="<?= htmlspecialchars($produto['id']) ?>">
+                                    <?= htmlspecialchars($produto['nome']) ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -146,7 +155,9 @@ $produtos = $produto->buscarTodos();
                         <select name="categoria" id="categoria" required>
                             <option value="">Selecione uma categoria</option>
                             <?php foreach ($categorias as $categoria): ?>
-                            <option value="<?= htmlspecialchars($categoria['id']) ?>"><?= htmlspecialchars($categoria['nome']) ?></option>
+                                <option value="<?= htmlspecialchars($categoria['id']) ?>">
+                                    <?= htmlspecialchars($categoria['nome']) ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -169,15 +180,17 @@ $produtos = $produto->buscarTodos();
         </div>
 
         <div id="form4" class="container">
-        <form action="processar.php" method="POST">
-        <input type="hidden" name="_method" value="DELETE">
+            <form action="processar.php" method="POST">
+                <input type="hidden" name="_method" value="DELETE">
                 <div class="campos">
                     <div class="entrada">
                         <label for="id">Produto</label>
                         <select name="id" id="id" required>
                             <option value="">Selecione um Produto</option>
                             <?php foreach ($produtos as $produto): ?>
-                            <option value="<?= htmlspecialchars($produto['id']) ?>"><?= htmlspecialchars($produto['nome']) ?></option>
+                                <option value="<?= htmlspecialchars($produto['id']) ?>">
+                                    <?= htmlspecialchars($produto['nome']) ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -186,7 +199,9 @@ $produtos = $produto->buscarTodos();
                         <select name="categoria" id="categoria" required>
                             <option value="">Selecione uma categoria</option>
                             <?php foreach ($categorias as $categoria): ?>
-                                <option value="<?= htmlspecialchars($categoria['id']) ?>"><?= htmlspecialchars($categoria['nome']) ?></option>
+                                <option value="<?= htmlspecialchars($categoria['id']) ?>">
+                                    <?= htmlspecialchars($categoria['nome']) ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -195,7 +210,7 @@ $produtos = $produto->buscarTodos();
             </form>
         </div>
     </main>
-    <script src="./js/script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 
 </html>
