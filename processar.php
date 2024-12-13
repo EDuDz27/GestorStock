@@ -120,11 +120,11 @@ if ($method == 'GET') {
             echo "<table class='tabela-resultados'>" .
                     "<thead>" .
                         "<tr>" .
-                            "<th>Data</th>" .
-                            "<th>Tipo</th>" .
-                            "<th>Quantidade</th>" .
-                            "<th>Fornecedor</th>" .
-                            "<th>Valor Total</th>" .
+                        "<th>Data</th>" .
+                        "<th>Tipo</th>" .
+                        "<th>Quantidade</th>" .
+                        "<th>Fornecedor</th>" .
+                        "<th>Valor Total</th>" .
                         "</tr>" .
                         "</thead>" .
                     "<tbody>";
@@ -164,13 +164,36 @@ if ($method == 'PUT') {
         $valor = $_POST['valor'] ?? null;
         $quantidade = $_POST['quantidade'] ?? null;
         $id_categoria = $_POST['categoria'] ?? null;
-
-        if (!$id || !$nome || !$valor || !$quantidade || !$id_categoria) {
-            echo json_encode(['error' => 'Campos obrigatórios estão faltando.']);
+    
+        // Verificar se o id foi fornecido
+        if (!$id) {
+            echo json_encode(['error' => 'ID do produto não fornecido.']);
             exit();
         }
-
-        // Atualizar o produto
+    
+        // Resgatar os dados atuais do produto para garantir que os valores não fornecidos sejam mantidos
+        $produto_atual = $produto->buscarPorId($id);
+        
+        if (!$produto_atual) {
+            echo json_encode(['error' => 'Produto não encontrado.']);
+            exit();
+        }
+    
+        // Backup dos dados originais
+        $nome_original = $produto_atual['nome'];
+        $descricao_original = $produto_atual['descricao'];
+        $valor_original = $produto_atual['preco'];
+        $quantidade_original = $produto_atual['quantidade_estoque'];
+        $id_categoria_original = $produto_atual['id_categoria'];
+    
+        // Validar e manter as informações originais caso os campos sejam vazios
+        $nome = ($nome !== null && $nome !== '') ? $nome : $nome_original;
+        $descricao = ($descricao !== null && $descricao !== '') ? $descricao : $descricao_original;
+        $valor = ($valor !== null && $valor !== '') ? $valor : $valor_original;
+        $quantidade = ($quantidade !== null && $quantidade !== '') ? $quantidade : $quantidade_original;
+        $id_categoria = ($id_categoria !== null && $id_categoria !== '') ? $id_categoria : $id_categoria_original;
+    
+        // Atualizar o produto com os dados fornecidos (com os valores atualizados)
         $produto_atualizado = $produto->atualizar($id, $nome, $descricao, $valor, $quantidade, $id_categoria);
         if ($produto_atualizado) {
             echo json_encode(['message' => 'Produto atualizado com sucesso.']);
@@ -182,6 +205,7 @@ if ($method == 'PUT') {
         echo json_encode(['error' => 'Formato de conteúdo não suportado.']);
         exit();
     }
+    
 }
 
 // Método DELETE - Deletar (Remover um produto)

@@ -48,7 +48,7 @@ $produtos = $produto->buscarTodos();
                         <datalist id="produtos">
                             <?php foreach ($produtos as $produto): ?>
                                 <option value="<?php echo htmlspecialchars($produto['nome']); ?>">
-                                <?php endforeach; ?>
+                            <?php endforeach; ?>
                         </datalist>
                     </div>
 
@@ -148,11 +148,11 @@ $produtos = $produto->buscarTodos();
                     </div>
                     <div class="entrada">
                         <label for="novo-nome">Novo Nome</label>
-                        <input type="text" name="novo-nome" required>
+                        <input type="text" name="novo-nome">
                     </div>
                     <div class="entrada">
                         <label for="categoria">Categoria</label>
-                        <select name="categoria" id="categoria" required>
+                        <select name="categoria" id="categoria">
                             <option value="">Selecione uma categoria</option>
                             <?php foreach ($categorias as $categoria): ?>
                                 <option value="<?= htmlspecialchars($categoria['id']) ?>">
@@ -163,12 +163,12 @@ $produtos = $produto->buscarTodos();
                     </div>
                     <div class="entrada">
                         <label for="valor">Valor Unidade</label>
-                        <input type="number" name="valor" step="0.01" min="0" required>
+                        <input type="number" name="valor" step="0.01" min="0">
                     </div>
 
                     <div class="entrada">
                         <label for="quantidade">Quantidade</label>
-                        <input type="number" name="quantidade" required>
+                        <input type="number" name="quantidade">
                     </div>
                     <div class="entrada">
                         <label for="descricao">Descrição</label>
@@ -196,7 +196,7 @@ $produtos = $produto->buscarTodos();
                     </div>
                     <div class="entrada">
                         <label for="categoria">Categoria</label>
-                        <select name="categoria" id="categoria" required>
+                        <select name="categoria" id="categoria">
                             <option value="">Selecione uma categoria</option>
                             <?php foreach ($categorias as $categoria): ?>
                                 <option value="<?= htmlspecialchars($categoria['id']) ?>">
